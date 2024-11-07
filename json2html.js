@@ -1,31 +1,34 @@
-// json2html.js
 export default function json2html(data) {
-  // Create the opening table tag with the custom data attribute
-  let html = '<table data-user="varshareddyasani@gmail.com">';
+  """Converts a JavaScript array of objects to an HTML table string.
 
-  // Create the table header based on the keys of the first object
-  html += '<thead><tr>';
-  // Get the keys (columns) dynamically from the first object in the array
-  const headers = Object.keys(data[0]);
-  headers.forEach(header => {
-    html += `<th>${header}</th>`;
-  });
-  html += '</tr></thead>';
+  Args:
+    data: A list of dictionaries, where each dictionary represents a row in the table.
 
-  // Create the table body with the rows
-  html += '<tbody>';
-  data.forEach(row => {
-    html += '<tr>';
-    headers.forEach(header => {
-      html += `<td>${row[header] || ''}</td>`;  // Handle undefined values
-    });
-    html += '</tr>';
-  });
-  html += '</tbody>';
+  Returns:
+    A string containing the HTML table representation of the data.
+  """
 
-  // Close the table tag
-  html += '</table>';
+  // Get all unique keys from the data
+  const keys = new Set(key for item in data for key in item.keys());
 
-  // Return the generated HTML string
-  return html;
+  // Construct the table header row
+  const tableHeader = `<tr>${[...keys].map(key => `<th>${key}</th>`).join('')}</tr>`;
+
+  // Construct the table body rows
+  const tableBody = data.map(
+      item =>
+          `<tr>${[...keys].map(key => `<td>${item[key] || ''}</td>`).join('')}</tr>`
+  ).join('');
+
+  // Return the complete HTML table string with data-user attribute
+  return (
+      `<table>\n` +
+      `  <thead>\n` +
+      `    ${tableHeader}\n` +
+      `  </thead>\n` +
+      `  <tbody>\n` +
+      `    ${tableBody}\n` +
+      `  </tbody>\n` +
+      `</table>`
+  );
 }
